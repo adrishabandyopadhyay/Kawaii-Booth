@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kawaii-Booth 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="blob-bg"></div>
+  <div id="particles"></div>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="nb-logo"><span class="nem">📸</span>Kawaii-Booth</div>
+    <div class="nb-tag">✨˚࿔Your cute print studio˚࿔✨</div>
+  </nav>
+
+  <main class="app-main">
+
+    <!-- ── HERO ── -->
+    <section class="hero">
+      <span class="hero-cam">📸</span>
+      <h1>Kawaii-Booth</h1>
+      <p>Upload photos → pick layout → download your print-ready A4 sheet!</p>
+      <div class="hero-gems"><span>🌸</span><span>💕</span><span>⭐</span><span>💕</span><span>🌸</span></div>
+    </section>
+
+    <!-- ── STEP INDICATORS ── -->
+    <div class="steps-row">
+      <div class="step-card act" id="sc1" onclick="jumpTo('secUpload',0)">
+        <span class="sc-icon">📁</span>
+        <div class="sc-num">Step 1</div>
+        <div class="sc-title">Upload Photos</div>
+        <div class="sc-desc">Drag &amp; drop or browse</div>
+      </div>
+      <div class="step-card" id="sc2" onclick="jumpTo('secLayout',1)">
+        <span class="sc-icon">🎨</span>
+        <div class="sc-num">Step 2</div>
+        <div class="sc-title">Choose Layout</div>
+        <div class="sc-desc">1, 2, 3 or 4 per A4</div>
+      </div>
+      <div class="step-card" id="sc3" onclick="jumpTo('secPreview',2)">
+        <span class="sc-icon">🖨️</span>
+        <div class="sc-num">Step 3</div>
+        <div class="sc-title">Download PDF</div>
+        <div class="sc-desc">Print at any photo shop!</div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: UPLOAD ── -->
+    <div class="card sec" id="secUpload">
+      <div class="drop-zone" id="dz" onclick="triggerFile()">
+        <span class="dz-em">🌸</span>
+        <div class="dz-title">Drop your cuties here!</div>
+        <div class="dz-sub">JPG · PNG · WEBP · GIF</div>
+        <button class="btn-browse" onclick="event.stopPropagation();triggerFile()">💕 Browse Photos</button>
+      </div>
+      <input type="file" id="fi" accept="image/*" multiple style="display:none" />
+    </div>
+
+    <!-- ── STEP 2: LAYOUT ── -->
+    <div class="card sec hidden" id="secLayout">
+      <div class="card-hd">🎨 Layout &amp; Style <span class="c-badge" id="cntB">0 photos</span></div>
+      <div class="lp-label">Photos per A4 sheet</div>
+      <div class="lp-grid">
+        <div class="lp-btn" data-l="1" onclick="setLayout(this)">
+          <div class="lp-thumb lt1"><div class="c"></div></div>
+          1 Photo
+        </div>
+        <div class="lp-btn sel" data-l="2v" onclick="setLayout(this)">
+          <div class="lp-thumb lt2v"><div class="c"></div><div class="c"></div></div>
+          2 Top-Bottom
+        </div>
+        <div class="lp-btn" data-l="2h" onclick="setLayout(this)">
+          <div class="lp-thumb lt2h"><div class="c"></div><div class="c"></div></div>
+          2 Side-by-Side
+        </div>
+        <div class="lp-btn" data-l="3" onclick="setLayout(this)">
+          <div class="lp-thumb lt3"><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          3 Photos
+        </div>
+        <div class="lp-btn" data-l="4" onclick="setLayout(this)">
+          <div class="lp-thumb lt4"><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div></div>
+          4 Photos
+        </div>
+      </div>
+      <div class="srow">
+        <div class="sg">
+          <label>✨ Border Deco</label>
+          <select id="selDeco" onchange="renderSheets()">
+            <option value="">None</option>
+            <option value="dh">⭐ Stars</option>
+            <option value="dh2">💕 Hearts</option>
+            <option value="dh3">🌸 Flowers</option>
+          </select>
+        </div>
+        <div class="sg">
+          <label>🎀 Corner Emoji</label>
+          <select id="selCrn" onchange="renderSheets()">
+            <option value="">None</option>
+            <option value="🌸">🌸 Sakura</option>
+            <option value="⭐">⭐ Star</option>
+            <option value="💕">💕 Hearts</option>
+            <option value="✨">✨ Sparkle</option>
+            <option value="🦋">🦋 Butterfly</option>
+          </select>
+        </div>
+        <div class="sg">
+          <label>📐 Margin (mm)</label>
+          <input type="number" id="selMarg" value="8" min="0" max="20" onchange="renderSheets()" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: PREVIEW + DOWNLOAD ── -->
+    <div class="card sec hidden" id="secPreview">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+        <div class="card-hd" style="margin-bottom:0;">🖼️ Your Photos</div>
+        <div class="bar-btns">
+          <button class="btn-sm btn-add" onclick="triggerFile()">➕ Add More</button>
+          <button class="btn-sm btn-clr" onclick="clearPhotos()">✕ Clear All</button>
+        </div>
+      </div>
+      <div class="drag-hint">↕️ Drag to reorder &nbsp;·&nbsp; hover → toolbar to edit &nbsp;·&nbsp; hover preview slot → ✏️ Edit</div>
+      <div class="tgrid" id="tgrid"></div>
+      <div style="border-top:2px dashed rgba(255,133,161,.16);padding-top:26px;margin-top:6px;">
+        <div class="card-hd" style="margin-bottom:20px;">📄 Print Preview</div>
+        <div class="sheets-row" id="sheetsRow"></div>
+      </div>
+      <div class="gen-block">
+        <button class="btn-gen" onclick="generatePDF()"><span class="gi">🖨️</span> Download Print PDF</button>
+        <div class="gen-note">✨ A4 · High quality · Ready to print at any photo shop!</div>
+        <div class="prog-wrap" id="progWrap">
+          <div class="prog-track">
+            <div class="prog-fill" id="progFill"></div>
+          </div>
+          <div class="prog-lbl" id="progLbl">Packing kawaii sheets… 🌸</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── EDITOR MODAL ── -->
+  <div class="ed-ov" id="edOv">
+    <div class="ed-box">
+      <div class="ed-hd">
+        <div class="ed-title">🎨 Edit Photo <span id="edNum" style="color:var(--pk2)"></span></div>
+        <button class="ed-close" onclick="closeEditor()">✕</button>
+      </div>
+      <div class="crop-frame" id="cropFrame">
+        <canvas id="edCanvas"></canvas>
+      </div>
+      <div class="crop-help" id="cropHelp"></div>
+
+      <div class="ed-sec">
+        <div class="ed-sec-title">↩️ Rotate</div>
+        <div class="ed-row">
+          <button class="ed-rbtn" onclick="edRotate(-90)">↺ 90° Left</button>
+          <button class="ed-rbtn" onclick="edRotate(90)">↻ 90° Right</button>
+          <button class="ed-rbtn" onclick="edRotate(180)">↕️ 180°</button>
+        </div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-sec-title">🖼️ Fill Mode</div>
+        <div class="fit-row">
+          <button class="fit-btn on" id="btnCover" onclick="edSetFit('cover')">📐 Fill &amp; Crop (drag to adjust)</button>
+          <button class="fit-btn" id="btnContain" onclick="edSetFit('contain')">🔲 Fit Full Photo</button>
+        </div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-sec-title">🌟 Adjustments</div>
+        <div class="sl-row">
+          <label>☀️ Brightness</label>
+          <input type="range" class="sl" id="slB" min="50" max="200" value="100" oninput="edAdjust()" />
+          <span class="sl-val" id="vB">100%</span>
+        </div>
+        <div class="sl-row">
+          <label>🎨 Contrast</label>
+          <input type="range" class="sl" id="slC" min="50" max="200" value="100" oninput="edAdjust()" />
+          <span class="sl-val" id="vC">100%</span>
+        </div>
+        <div class="sl-row">
+          <label>🌈 Saturation</label>
+          <input type="range" class="sl" id="slS" min="0" max="300" value="100" oninput="edAdjust()" />
+          <span class="sl-val" id="vS">100%</span>
+        </div>
+      </div>
+      <div class="ed-foot">
+        <button class="btn-reset" onclick="edReset()">🔄 Reset</button>
+        <button class="btn-apply" onclick="edApply()">💕 Apply Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOAST ── -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
